@@ -1,5 +1,5 @@
 # New Cluster
-The goal of this chapter is to create you first EKS cluster that will allow you to run pods both in normal EC2 workers and on Fargate.
+**The goal of this chapter is to create you first EKS cluster that will allow you to run pods both in normal EC2 workers and on Fargate.**
 
 <aside class="warning">
 EKS on Fargate is currently not availible in all regions, so make sure you use one of the following regions: US East (N. Virginia), US East (Ohio), Europe (Ireland), and Asia Pacific (Tokyo)

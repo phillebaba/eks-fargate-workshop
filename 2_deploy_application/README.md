@@ -1,5 +1,5 @@
 # Deploy Application
-The goal of this chapter is to deploy an application in EKS that will only run on Fargate.
+**The goal of this chapter is to deploy an application in EKS that will only run on Fargate.**
 
 We will be using the application [podinfo](https://github.com/stefanprodan/podinfo) to try Fargates functionality. Podinfo is a small web application that showcases best practices of running microservices in Kubernetes. Podinfo provides a method to install it with [kustomize](https://github.com/kubernetes-sigs/kustomize) which we will use, but we will make some small changes to those manifests so that we can easily get an external ip to the loadbalancer.
 ![podinfo architecture]()
@@ -39,9 +39,7 @@ kubectl get node $NODE_NAME -o=jsonpath="{.metadata.labels['eks\.amazonaws\.com/
 
 If you have done everything right the second command should return the value `fargate` indicating that the compute type of the node the pod is running on is Fargate. You can also try to re-apply the ec2 manifests and check the node name of the pods after they have started.
 
-The observant of you may have realised that new nodes have been added to the cluster, more specifically 2 new nodes have been added to the cluster. This is different from how other traditional Kubernetes clusters work as there now is a 1:1 relationship between the pod and node, compared to a n_:1 relationship if we were only using EC2 worker nodes.
+The observant of you may have realised that new nodes have been added to the cluster, more specifically 2 new nodes have been added to the cluster. This is different from how other traditional Kubernetes clusters work as there now is a 1:1 relationship between the pod and node, compared to a n:1 relationship if we were only using EC2 worker nodes.
 
 [Next Chapter](../3_pod_resources)
-
-
 
