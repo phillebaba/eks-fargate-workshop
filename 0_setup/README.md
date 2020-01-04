@@ -6,7 +6,10 @@ Before starting you need to make sure that you have installed the following depe
 
 Start off by cloning this repository as you will need to give file paths to commands that you will execute.
 ```shell
-git clone github.com
+git clone https://github.com/phillebaba/eks-fargate-workshop.git
 ```
 
 Now that you have cloned the repository you get on with the workshop. This workshop is divided into chapters to make it easier to follow along. Some of the chapters will depend on reources created in others so make sure that you delete anything unless explicitly told so.
+
+[Next Chapter](../1_new_cluster)
+

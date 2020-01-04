@@ -8,7 +8,7 @@ To get the most of this workshop it is recommended to have some basic knowledge 
 
 ## Chapters
 0. [Setup](./0_setup)
-1. [First Cluster](./1_first_cluster)
+1. [New Cluster](./1_new_cluster)
 2. [Deploy Application](./2_deploy_application)
 
 ## Useful Resources

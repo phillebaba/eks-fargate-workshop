@@ -6,7 +6,7 @@ EKS on Fargate is currently not availible in all regions, so make sure you use o
 </aside>
 
 We will be creating our EKS cluster with [eksctl](https://eksctl.io/) as it automates the creation of the cluster and all the configurations very well. By default if you were to run the command `eksctl create cluster` it would create an EKS cluster with 2x `m5.large` EC2 worker nodes. This is not enough if we also want to enable Fargate for the EKS cluster. For this workshop we want to have a "mixed" cluster with both pods running on Fargate and on EC2, the end result will be similar to the diagram below.
-![eks fargate architecture](../assets/eks-fargate-architecture)
+![eks fargate architecture](../assets/eks-cluster-architecture.png)
 
 `eksctl` also takes a configuration file as input when creating a cluster to allow you to configure the vpc, region, node groups, etc. We will be focusing on two fiels, `managedNodeGroups` and `fargateProfiles`. The former is pretty self exlanitory, it specifies the configurations for the managed EC2 based node groups for the cluster. The latter is slightly more complicated as it is a new concept created to allow EKS to run on Fargate.
 
