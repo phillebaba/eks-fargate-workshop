@@ -78,4 +78,5 @@ Understanding the resource allocation behavior of EKS on Fargate is important as
 
 You should now know how pod resource allocation works on EKS fargate. There are some more examples that you can continue to play around with if you want. Having init containers with large resource requests and running the same requests on a EC2 node instead to see the differences. Otherwise continue to the next chapter.
 
-[Next Chapter]()
+[Next Chapter](../4_autoscaling)
+

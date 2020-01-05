@@ -1,0 +1,13 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: resource-consumer
+spec:
+  template:
+    spec:
+      containers:
+      - name: resource-consumer
+        resources:
+          requests:
+            memory: "500Mi"
+            cpu: "250m"

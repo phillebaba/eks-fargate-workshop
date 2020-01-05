@@ -8,18 +8,17 @@ To get the most of this workshop it is recommended to have some basic knowledge 
 
 ## Chapters
 This workshop is split into chapters that will have a specific subject focus. They are linked together though and chapters will depend on work done in previous chapters, so it is reccomended to do them in order.
-
 0. [Setup](./0_setup)
-1. [New Cluster](./1_new_cluster)
-2. [Deploy Application](./2_deploy_application)
+1. [New cluster](./1_new_cluster)
+2. [Deploy application](./2_deploy_application)
 3. [Pod resources](./3_pod_resources)
-4. [Autoscaling]()
-5. [Limitations]()
-4. [Cleanup](./n_cleanup)
+4. [Autoscaling](./4_autoscaling)
+6. [Limitations](./6_limitations)
+7. [Cleanup](./7_cleanup)
 
 ## Useful Resources
-* [ReInvent Launch](https://www.youtube.com/watch?v=m-3tMXmWWQw)
+* [AWS re:Invent 2019: Running Kubernetes Applications on AWS Fargate](https://www.youtube.com/watch?v=m-3tMXmWWQw)
 * [EKS Workshop](https://eksworkshop.com/)
 * [EKS Docs](https://aws.amazon.com/eks/)
 * [EKS Fargate Getting Started](https://docs.aws.amazon.com/eks/latest/userguide/fargate-getting-started.html)
-* [itnext.io](https://itnext.io/eks-fargate-extensibility-of-kubernetes-serverless-benefits-77599ac1763)
+* [EKS + Fargate = Extensibility of Kubernetes + Serverless Benefits](https://itnext.io/eks-fargate-extensibility-of-kubernetes-serverless-benefits-77599ac1763)
