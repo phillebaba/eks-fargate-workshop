@@ -52,7 +52,7 @@ Now we see that the CPU maxes out just below 500 millicores. How does this make 
 | 2 vCPU | Between 4 GB and 16 GB in 1-GB increments |
 | 4 vCPU | Between 8 GB and 30 GB in 1-GB increments |
 
-The following steps are first done by fargate to figure out what compute configuration to use.
+The following steps are first done by fargate to figure out what compute configuration to use:
 * The maximum request out of any Init containers is used to determine the Init request vCPU and memory requirements.
 * Requests for all long-running containers are added up to determine the long-running request vCPU and memory requirements.
 * The larger of the above two values is chosen for the vCPU and memory request to use for your pod.
@@ -61,8 +61,6 @@ The following steps are first done by fargate to figure out what compute configu
 In our first test we did not set any resource requests, resulting in the pod defaulting to the lowest compute configuration (0.25 vCPU and 0.5 GB) which explains why we throttled just below 250 millicores.
 
 In the second test we allocated 300 millicores of CPU and 3 GB of memory. We dont have any init containers to worry about and resource limits don't matter. Which means that the closest CPU configuration is .5 vCPU (or 500 millicores). The first guess would be to say 3 GB, but you have to remember that Fargate will add 256 MB to all memory requests, causing Fargate to round up to 4 GB. If we were to change the memory request to 4 GB we would round up to 5 GB forcing us to pay for 1 vCPU as there is no combination of 0.5 vCPU and 5 GB.
-
-Understanding the resource allocation behavior of EKS on Fargate is important as you will be paying for the compute configuration allocated in Fargate, not what you have requested in Kubernetes. So if you request 100 millicores for your pod you will still pay for the minimum compute configuration which is 250 millicores in Fargate. This also means that a init container that makes large resource requests will set the compute configuration and price for the pods long running containers. For more information about pricing please refer to [Fargates pricing documentation](https://aws.amazon.com/fargate/pricing/).
 
 If there is no memory limit what happens when we surpass our memory request? Lets try to consume 5 GB of memory knowing that our pod will only have 4 GB availible to it, and see what happens.
 ```shell
@@ -75,6 +73,8 @@ We should see that the metrics collection fails and the pod has been restarted. 
 # jsonpath to restart count if you have time
 kubectl get pods -l app=resource-consumer
 ```
+
+Understanding the resource allocation behavior of EKS on Fargate is important as you will be paying for the compute configuration allocated in Fargate, not what you have requested in Kubernetes. So if you request 100 millicores for your pod you will still pay for the minimum compute configuration which is 250 millicores in Fargate. This also means that a init container that makes large resource requests will set the compute configuration and price for the pods long running containers. For more information about pricing please refer to [Fargates pricing documentation](https://aws.amazon.com/fargate/pricing/).
 
 You should now know how pod resource allocation works on EKS fargate. There are some more examples that you can continue to play around with if you want. Having init containers with large resource requests and running the same requests on a EC2 node instead to see the differences. Otherwise continue to the next chapter.
 
