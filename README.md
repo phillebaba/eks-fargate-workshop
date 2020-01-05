@@ -7,9 +7,15 @@ To get the most of this workshop it is recommended to have some basic knowledge 
 [EKS on Fargate now GA](https://aws.amazon.com/blogs/aws/amazon-eks-on-aws-fargate-now-generally-available/)
 
 ## Chapters
+This workshop is split into chapters that will have a specific subject focus. They are linked together though and chapters will depend on work done in previous chapters, so it is reccomended to do them in order.
+
 0. [Setup](./0_setup)
 1. [New Cluster](./1_new_cluster)
 2. [Deploy Application](./2_deploy_application)
+3. [Pod resources](./3_pod_resources)
+4. [Autoscaling]()
+5. [Limitations]()
+4. [Cleanup](./n_cleanup)
 
 ## Useful Resources
 * [ReInvent Launch](https://www.youtube.com/watch?v=m-3tMXmWWQw)

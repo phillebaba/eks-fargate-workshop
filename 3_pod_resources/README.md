@@ -1,1 +1,81 @@
-# Pod Resources
+# Pod Resource
+**The goal of this chapter is to understand how resources are allocated to a pod on Fargate.**
+
+Kubernetes allows you to define requests, a minimum amount of vCPU and memory resources that are allocated to each container in a pod. Pods are scheduled by Kubernetes to ensure that at least the requested resources for each pod are available on the compute resource. Fargate works a bit differently as it is not hampered (from our perspective) by nodes having limited amount of resources. Instead containers in a pod will be allocated the amount it has requested. For more information please check the [documentation](https://docs.aws.amazon.com/eks/latest/userguide/fargate-pod-configuration.html).
+
+## Metrics Server
+Before we can begin we need to deploy the [metrics-server](https://github.com/kubernetes-sigs/metrics-server) that aggregates metrics in the cluster as it does not come by default in EKS. Give it a few seconds to start then tyou should be able to get node and pod metrics.
+```shell
+kubectl apply -k metrics-server
+kubectl -n kube-system wait --for=condition=available deployment/metrics-server && kubectl top nodes
+kubectl top pods
+```
+
+## Resource Consumer
+Let's start out by deploying our pods without any resource requests or limits on Fargate. We are deploying [resource-consumer](https://github.com/kubernetes/kubernetes/tree/master/test/images/resource-consumer) which is a tool to generate cpu and memory utilization in a container.
+```shell
+kubectl apply -k resource-consumer/base
+kubectl wait --for=condition=available deployment/resource-consumer
+```
+
+Resource consumer will expose an API through a load balancer. So lets get the external ip of the service and make a request. We are going to tell resource consumer to consum 700 millicores of CPU for 30 seconds. We can then watch the CPU metrics change as the usage increases. The question is will it throttle and if so when?
+```shell
+EXTERNAL_IP=$(kubectl get service -l app=podinfo -o=jsonpath="{.items[0].status.loadBalancer.ingress[0].hostname}")
+curl --data "millicores=700&durationSec=60" http://$EXTERNAL_IP:8080/ConsumeCPU
+watch -n 1 kubectl top pod -l app=resource-consumer
+```
+
+The CPU will probably max out around 250 millicores even when we dont set any explicit resource requests or limits, and there is a good explanation for this. Before the explantation why this is the case lets try the same thing but with resource limits. In this instance we will set the resource request for the CPU and memory to 300 millicores and 3 Gigabytes.
+```yaml
+resources:
+  requests:
+    memory: "3G"
+    cpu: "300m"
+```
+
+Apply the manifests with resource request and repeat the steps like before. We will also tell the application to consume memory as well.
+```shell
+kubectl apply -k resource-consumer/with_request
+kubectl wait --for=condition=available deployment/resource-consumer
+curl --data "millicores=700&durationSec=120" http://$EXTERNAL_IP:8080/ConsumeCPU
+curl --data "megabytes=1000&durationSec=120" http://$EXTERNAL_IP:8080/ConsumeMem
+watch -n 1 kubectl top pod -l app=resource-consumer
+```
+
+Now we see that the CPU maxes out just below 500 millicores. How does this make sense when we set the request to 300 millicores? The explanation is pretty simple, it is because Fargate will round up the resource requests made by a pod to a the closest Fargate compute configuration. Please note that we are talking about resource requests and **not limits** as Fargate will ignore any resource limits set to a pod.
+
+| vCPU value | Memory value |
+| --- | --- |
+| .25 vCPU | 0.5 GB, 1 GB, 2 GB |
+| .5 vCPU | 1 GB, 2 GB, 3 GB, 4 GB |
+| 1 vCPU | 2 GB, 3 GB, 4 GB, 5 GB, 6 GB, 7 GB, 8 GB |
+| 2 vCPU | Between 4 GB and 16 GB in 1-GB increments |
+| 4 vCPU | Between 8 GB and 30 GB in 1-GB increments |
+
+The following steps are first done by fargate to figure out what compute configuration to use.
+* The maximum request out of any Init containers is used to determine the Init request vCPU and memory requirements.
+* Requests for all long-running containers are added up to determine the long-running request vCPU and memory requirements.
+* The larger of the above two values is chosen for the vCPU and memory request to use for your pod.
+* Fargate adds 256 MB to each pod's memory reservation for the required Kubernetes components (kubelet, kube-proxy, and containerd).
+
+In our first test we did not set any resource requests, resulting in the pod defaulting to the lowest compute configuration (0.25 vCPU and 0.5 GB) which explains why we throttled just below 250 millicores.
+
+In the second test we allocated 300 millicores of CPU and 3 GB of memory. We dont have any init containers to worry about and resource limits don't matter. Which means that the closest CPU configuration is .5 vCPU (or 500 millicores). The first guess would be to say 3 GB, but you have to remember that Fargate will add 256 MB to all memory requests, causing Fargate to round up to 4 GB. If we were to change the memory request to 4 GB we would round up to 5 GB forcing us to pay for 1 vCPU as there is no combination of 0.5 vCPU and 5 GB.
+
+Understanding the resource allocation behavior of EKS on Fargate is important as you will be paying for the compute configuration allocated in Fargate, not what you have requested in Kubernetes. So if you request 100 millicores for your pod you will still pay for the minimum compute configuration which is 250 millicores in Fargate. This also means that a init container that makes large resource requests will set the compute configuration and price for the pods long running containers. For more information about pricing please refer to [Fargates pricing documentation](https://aws.amazon.com/fargate/pricing/).
+
+If there is no memory limit what happens when we surpass our memory request? Lets try to consume 5 GB of memory knowing that our pod will only have 4 GB availible to it, and see what happens.
+```shell
+curl --data "megabytes=5000&durationSec=30" http://$EXTERNAL_IP:8080/ConsumeMem
+watch -n 1 kubectl top pod -l app=resource-consumer
+```
+
+We should see that the metrics collection fails and the pod has been restarted. This type of behavior is similar to how resource limits work in "normal" worker nodes. When a pod passes its limit it will be restarted.
+```shell
+# jsonpath to restart count if you have time
+kubectl get pods -l app=resource-consumer
+```
+
+You should now know how pod resource allocation works on EKS fargate. There are some more examples that you can continue to play around with if you want. Having init containers with large resource requests and running the same requests on a EC2 node instead to see the differences. Otherwise continue to the next chapter.
+
+[Next Chapter]()

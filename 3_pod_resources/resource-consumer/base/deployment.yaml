@@ -1,0 +1,25 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: resource-consumer
+  labels:
+    run: resource-consumer
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      run: resource-consumer
+  template:
+    metadata:
+      labels:
+        run: resource-consumer
+        env: fargate
+    spec:
+      containers:
+      - name: resource-consumer
+        image: gcr.io/kubernetes-e2e-test-images/resource-consumer:1.4
+        ports:
+        - containerPort: 8080
+          protocol: TCP

@@ -29,6 +29,19 @@ Lets change the deployment so that the pod gets the correct label to fit the Far
 kubectl apply -k fargate
 ```
 
+The only difference is that we are adding a label to the deployment template, causing the pods to be re-scheduled with the labels.
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: podinfo
+spec:
+  template:
+    metadata:
+      labels:
+        env: fargate
+```
+
 We can now verify that the podinfo pod is running on Fargate by getting the name of the node and comparing it to the nodes present in the cluster.
 The node name will have the prefix `fargate` and also have labels added to it by EKS indicating the compute type. So lets get name of the node the pod is running on and get the value of the compute type label.
 ```shell
@@ -40,6 +53,14 @@ kubectl get node $NODE_NAME -o=jsonpath="{.metadata.labels['eks\.amazonaws\.com/
 If you have done everything right the second command should return the value `fargate` indicating that the compute type of the node the pod is running on is Fargate. You can also try to re-apply the ec2 manifests and check the node name of the pods after they have started.
 
 The observant of you may have realised that new nodes have been added to the cluster, more specifically 2 new nodes have been added to the cluster. This is different from how other traditional Kubernetes clusters work as there now is a 1:1 relationship between the pod and node, compared to a n:1 relationship if we were only using EC2 worker nodes.
+|     | Fargate | Managed Nodes |
+| --- | --- | --- |
+| Units of work | Pod | Pod and EC2 |
+| Unit of charge | Pod | EC2 |
+| Host lifecycle | There is no visible host | AWS |
+| Host AMI | There is no visible host | AWS vetted AMIs |
+| Host:Pods | 1:1 | 1:many |
+
 
 [Next Chapter](../3_pod_resources)
 

@@ -26,7 +26,7 @@ The Fargate profile works slightly differently compared to using [node selectors
 ## Creating a Cluster
 `eksctl` also takes a configuration file as input when creating a cluster to allow you to configure the vpc, region, node groups, etc. We will be mainly using two of these fields, `managedNodeGroups` and `fargateProfiles`. The former configures the EKS managed nodes groups. This workshop will not go into the details of managed nodes groups, all you need to know is that it will create EC2 instances that will be joined to your EKS cluster. If you want more please refer to the [documentation](https://docs.aws.amazon.com/eks/latest/userguide/managed-node-groups.html). The latter configures the Fargate profile as was previously described.
 
-Looking at the content of the `cluster.yaml` file located in the chapters directory we can see that a single node group is going to be created with the instance type `t2.large` with a desired capacity of two. Additionally a Fargate profile will be created that will schedule pods on Fargate that are created in the `default` namespace and have the label `scheduler: fargate`.
+Looking at the content of the `cluster.yaml` file located in the chapters directory we can see that a single node group is going to be created with the instance type `t2.large` with a desired capacity of two. Additionally a Fargate profile will be created that will schedule pods on Fargate that are created in the `default` namespace and have the label `env: fargate`.
 ```yaml
 apiVersion: eksctl.io/v1alpha5
 kind: ClusterConfig
@@ -46,7 +46,7 @@ fargateProfiles:
     selectors:
       - namespace: default
         labels:
-          scheduler: fargate
+          env: fargate
 ```
 
 Let's create the cluster, make sure that you are located in the correct directory. It may take up to 15 minutes for the cluster to be created.
