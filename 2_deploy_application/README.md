@@ -2,7 +2,7 @@
 **The goal of this chapter is to deploy an application in EKS that will only run on Fargate.**
 
 We will be using the application [podinfo](https://github.com/stefanprodan/podinfo) to try Fargates functionality. Podinfo is a small web application that showcases best practices of running microservices in Kubernetes. Podinfo provides a method to install it with [kustomize](https://github.com/kubernetes-sigs/kustomize) which we will use, but we will make some small changes to those manifests so that we can easily get an external ip to the loadbalancer.
-![podinfo architecture]()
+![podinfo architecture](../assets/pod-info-architecture.png)
 
 We will first deploy the podinfo application onto our ec2 worker nodes to get a baseline. Apply the EC2 kustomize manifests to the cluster.
 ```shell
