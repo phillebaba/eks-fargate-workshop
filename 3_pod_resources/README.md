@@ -42,7 +42,17 @@ curl --data "megabytes=1000&durationSec=120" http://$EXTERNAL_IP:8080/ConsumeMem
 watch -n 1 kubectl top pod -l app=resource-consumer
 ```
 
-Now we see that the CPU maxes out just below 500 millicores. How does this make sense when we set the request to 300 millicores? The explanation is pretty simple, it is because Fargate will round up the resource requests made by a pod to a the closest Fargate compute configuration. Please note that we are talking about resource requests and **not limits** as Fargate will ignore any resource limits set to a pod.
+We now see that the CPU maxes out just below 500 millicores. Why is Fargate allocating us more resources than we requested?
+
+**The following steps are first done by Fargate to figure out what compute configuration to use:**
+* The maximum request out of any Init containers is used to determine the Init request vCPU and memory requirements.
+* Requests for all long-running containers are added up to determine the long-running request vCPU and memory requirements.
+* The larger of the above two values is chosen for the vCPU and memory request to use for your pod.
+* Fargate adds 256 MB to each pod's memory reservation for the required Kubernetes components (kubelet, kube-proxy, and containerd).
+
+![resource logic](../assets/resource-logic.png)
+
+After that value is calculated for both the CPU and memory it matched to one of the compute configurations in the table below. As shown it is not possible for a pod to have less than 250 millicores and 0.5 GB of resources allocated to it on Fargate. It also means that it is not possible for a pod to have 500 millicores and 0.5 GB of memory allocated to it. To fulfill the request of 500 millicores would force Fargate to chose the best fitting memory value which would be 1 GB.
 
 | vCPU value | Memory value |
 | --- | --- |
@@ -52,17 +62,12 @@ Now we see that the CPU maxes out just below 500 millicores. How does this make 
 | 2 vCPU | Between 4 GB and 16 GB in 1-GB increments |
 | 4 vCPU | Between 8 GB and 30 GB in 1-GB increments |
 
-The following steps are first done by fargate to figure out what compute configuration to use:
-* The maximum request out of any Init containers is used to determine the Init request vCPU and memory requirements.
-* Requests for all long-running containers are added up to determine the long-running request vCPU and memory requirements.
-* The larger of the above two values is chosen for the vCPU and memory request to use for your pod.
-* Fargate adds 256 MB to each pod's memory reservation for the required Kubernetes components (kubelet, kube-proxy, and containerd).
-
 In our first test we did not set any resource requests, resulting in the pod defaulting to the lowest compute configuration (0.25 vCPU and 0.5 GB) which explains why we throttled just below 250 millicores.
 
 In the second test we allocated 300 millicores of CPU and 3 GB of memory. We dont have any init containers to worry about and resource limits don't matter. Which means that the closest CPU configuration is .5 vCPU (or 500 millicores). The first guess would be to say 3 GB, but you have to remember that Fargate will add 256 MB to all memory requests, causing Fargate to round up to 4 GB. If we were to change the memory request to 4 GB we would round up to 5 GB forcing us to pay for 1 vCPU as there is no combination of 0.5 vCPU and 5 GB.
 
-If there is no memory limit what happens when we surpass our memory request? Lets try to consume 5 GB of memory knowing that our pod will only have 4 GB availible to it, and see what happens.
+## Memory Limits
+If resource limits are ignored what happens when we surpass our memory request? Lets try to consume 5 GB of memory knowing that our pod will only have 4 GB availible to it, and see what happens.
 ```shell
 curl --data "megabytes=5000&durationSec=30" http://$EXTERNAL_IP:8080/ConsumeMem
 watch -n 1 kubectl top pod -l app=resource-consumer
