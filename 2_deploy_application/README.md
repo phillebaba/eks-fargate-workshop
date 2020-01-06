@@ -53,13 +53,14 @@ kubectl get node $NODE_NAME -o=jsonpath="{.metadata.labels['eks\.amazonaws\.com/
 If you have done everything right the second command should return the value `fargate` indicating that the compute type of the node the pod is running on is Fargate. You can also try to re-apply the ec2 manifests and check the node name of the pods after they have started.
 
 The observant of you may have realised that new nodes have been added to the cluster, more specifically 2 new nodes have been added to the cluster. This is different from how other traditional Kubernetes clusters work as there now is a 1:1 relationship between the pod and node, compared to a n:1 relationship if we were only using EC2 worker nodes.
+
 |     | Fargate | Managed Nodes |
 | --- | --- | --- |
-| Units of work | Pod | Pod and EC2 |
-| Unit of charge | Pod | EC2 |
-| Host lifecycle | There is no visible host | AWS |
-| Host AMI | There is no visible host | AWS vetted AMIs |
-| Host:Pods | 1:1 | 1:many |
+| **Units of work** | Pod | Pod and EC2 |
+| **Unit of charge** | Pod | EC2 |
+| **Host lifecycle** | There is no visible host | AWS |
+| **Host AMI** | There is no visible host | AWS vetted AMIs |
+| **Host:Pods** | 1:1 | 1:many |
 
 
 [Next Chapter](../3_pod_resources)
