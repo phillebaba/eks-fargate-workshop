@@ -1,0 +1,14 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: time-fargate
+spec:
+  template:
+    metadata:
+      labels:
+        env: fargate
+    spec:
+      containers:
+      - name: busybox
+        image: busybox
+      restartPolicy: Never

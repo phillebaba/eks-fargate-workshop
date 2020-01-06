@@ -13,8 +13,8 @@ This workshop is split into chapters that will have a specific subject focus. Th
 2. [Deploy application](./2_deploy_application)
 3. [Pod resources](./3_pod_resources)
 4. [Autoscaling](./4_autoscaling)
-6. [Limitations](./6_limitations)
-7. [Cleanup](./7_cleanup)
+5. [Limitations](./5_limitations)
+6. [Cleanup](./6_cleanup)
 
 ## Useful Resources
 * [AWS re:Invent 2019: Running Kubernetes Applications on AWS Fargate](https://www.youtube.com/watch?v=m-3tMXmWWQw)
