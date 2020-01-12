@@ -11,6 +11,10 @@ spec:
     port: 80
     protocol: TCP
     targetPort: http
-  - port: 9898
-    $patch: delete
+  - name: grpc
+    port: 9999
+    protocol: TCP
+    targetPort: grpc
+  selector:
+    app: podinfo
   type: LoadBalancer

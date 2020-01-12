@@ -29,7 +29,7 @@ Measure the time it takes for a pod to complete on Fargate and EC2.
 ./meaure_time.sh
 ```
 
-The EC2 job will complete in a couple of seconds while the fargate job will take around two to four minutes to complete. The job is set to allways pull the image, even if it is very small, to remove any benefit that the EC2 job may get from not having to pull the image. It was not a suprise that the Fargate job would take longer, but it something to be aware of. A counter argument that could be made is that in the long run the times will even out. A worker node under load may take significantly longer to start a pod. Additionally if the cluster would have to scale to provide for the resource requests Fargate would be faster than EC2.
+The EC2 job will complete in a couple of seconds while the Fargate job will take around two to four minutes to complete. The job is set to always pull the image, even if it is very small, to remove any benefit that the EC2 job may get from not having to pull the image. It was not a surprise that the Fargate job would take longer, but it something to be aware of. A counter argument that could be made is that in the long run the times will even out. A worker node under load may take significantly longer to start a pod. Additionally if the cluster would have to scale to provide for the resource requests Fargate would be faster than EC2.
 
 [Next Chapter](../6_cleanup)
 

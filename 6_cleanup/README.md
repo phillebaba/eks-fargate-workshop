@@ -6,5 +6,5 @@ eksctl delete cluster workshop
 
 This may take some time so be patient, all resources should be removed after the command completes, including loadbalancers create by services.
 
-[Home](..)
+[Home](https://github.com/phillebaba/eks-fargate-workshop)
 

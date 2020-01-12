@@ -7,6 +7,8 @@ metadata:
     run: resource-consumer
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   revisionHistoryLimit: 10
   selector:
     matchLabels:
