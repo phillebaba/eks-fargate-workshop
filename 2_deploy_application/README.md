@@ -69,5 +69,5 @@ Before moving on to the next chapter make sure to delete the podinfo resources t
 kubectl delete deployment podinfo && kubectl delete service podinfo
 ```
 
-[Next Chapter](../3_pod_resources)
+[Next Chapter](../3_fargate_profile)
 

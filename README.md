@@ -26,10 +26,11 @@ This workshop is split into chapters, where each chapter will focus on a specifi
   <li><a href="./0_setup">Setup</a></li>
   <li><a href="./1_new_cluster">New Cluster</a></li>
   <li><a href="./2_deploy_application">Deploy Application</a></li>
-  <li><a href="./3_pod_resources">Pod Resources</a></li>
-  <li><a href="./4_autoscaling">Autoscaling</a></li>
-  <li><a href="./5_limitations">Limitations</a></li>
-  <li><a href="./6_cleanup">Cleanup</a></li>
+  <li><a href="./3_fargagte_profile">Fargate Profile</a></li>
+  <li><a href="./4_pod_resources">Pod Resources</a></li>
+  <li><a href="./5_autoscaling">Autoscaling</a></li>
+  <li><a href="./6_limitations">Limitations</a></li>
+  <li><a href="./7_cleanup">Cleanup</a></li>
 </ol>
 
 ## Useful Resources

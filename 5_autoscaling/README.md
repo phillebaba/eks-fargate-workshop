@@ -57,4 +57,4 @@ Before moving on to the next chapter make sure to remove the resource-consumer a
 kubectl delete deployment resource-consumer && kubectl delete service resource-consumer && kubectl delete hpa resource-consumer
 ```
 
-[Next Chapter](../5_limitations)
+[Next Chapter](../6_limitations)
