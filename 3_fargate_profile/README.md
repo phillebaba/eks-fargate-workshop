@@ -63,41 +63,9 @@ eksctl delete fargateprofile --name test -f new-namespace-cluster.yaml
 ```
 
 ## Pod Execution Role
-// Some sort of description
+When your cluster creates pods on AWS Fargate infrastructure, the pod needs to make calls to AWS APIs on your behalf, for example, to pull container images from Amazon ECR. The Amazon EKS pod execution role provides the IAM permissions to do this. This does however mean that it is currently not possible to use any private registry other than ECR as the source of images, as there is no private registry support like there is in [ECS](https://aws.amazon.com/blogs/compute/introducing-private-registry-authentication-support-for-aws-fargate/).
 
-Create a new role with S3 read access and that has a trust relationship to pods on Fargate.
-```shell
-BUCKET_NAME="test-bucket-$(date +%s)"
-aws s3api create-bucket --region eu-west-1 --bucket $BUCKET_NAME --create-bucket-configuration LocationConstraint=eu-west-1
-aws iam create-role --role-name s3-read --assume-role-policy-document file://role-trust-policy.json
-aws iam attach-role-policy --role-name s3-read --policy-arn arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
-```
-
-Upload a test file to the bucket.
-```shell
-```
-
-Create a new Fargate Profile with the execution role we just created.
-```shell
-ROLE_ARN=$(aws iam get-role --role-name s3-read --query "Role.Arn")
-cat execution-role-cluster.yaml | envsubst | eksctl create fargateprofile -f -
-```
-
-Run the new test pod, this pod will try to read the file we added to the S3 bucket and output it to stdout. If the role works we should see the content.
-```shell
-kubectl apply -f s3-pod.yaml
-kubectl -n test log -f s3
-```
-
-// Describe why it is useful
-
-Delete the pod, namespace, S3 bucket, role, and Fargate Profile.
-```shell
-kubectl -n test delete pod test
-kubectl delete ns test
-aws s3api delete-bucket --region eu-west-1 --bubcket $BUCKET_NAME
-eksctl delete fargateprofile --name test -f cluster.yaml
-```
+It is important to not confuse the pod execution role with a container role. In ECS there is a Task Execution Role and a ECS Task Role (or Container Role), one enables IAM permissions while creating the container and the other permissions for the container itself. Currently no such solution exists for EKS so one would have to continue using solutions like [kube2iam](https://github.com/jtblin/kube2iam).
 
 [Next Chapter](../4_pod_resources)
 

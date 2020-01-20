@@ -1,1 +1,0 @@
-hello eks-fargate-workshop
