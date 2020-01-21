@@ -85,5 +85,5 @@ You should now know how pod resource allocation works on EKS fargate. Make sure 
 kubectl delete deployment resource-consumer && kubectl delete service resource-consumer
 ```
 
-[Next Chapter](..5_autoscaling)
+[Next Chapter](../5_autoscaling)
 
