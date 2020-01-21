@@ -26,9 +26,10 @@ Fargate Profile allows an administrator to declare which pods run on Fargate. Th
 ```
 
 The Fargate profile works slightly differently compared to using [node selectors and node labels](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/) as there is no extra configuration to the pod. A cluster with a Fargate profile may schedule the pod on Fargate while a similar EKS cluster without a Fargate profile will not if the pod is running in the same namespace. Behavior like this has its benefits as the same manifests in multiple environments, at the same time the behavior may seem a bit invisible as you would need to check the EKS configuration to see how to run a pod on Fargate. For more information please refer to the [documentation](https://docs.aws.amazon.com/eks/latest/userguide/fargate-profile.html).
+![node-selctor](../assets/node-selector.png)
 
 ## New Namespace
-We now want to add a new namespace where all pods will run on Faraget.
+Now we want to add a new namespace where all pods will run on Fargate.
 
 Create a new namespace and deploy a pod in it.
 ```shell
