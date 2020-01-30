@@ -4,7 +4,7 @@ kind: Kustomization
 namespace: default
 
 bases:
-  - ../../3_pod_resources/resource-consumer/base
+  - ../../4_pod_resources/resource-consumer/base
 
 resources:
   - hpa.yaml
